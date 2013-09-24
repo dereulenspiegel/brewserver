@@ -1,0 +1,3 @@
+hardwareInterfaceImpl: de.akuz.brewserver.mock.TestHardware
+notificationImpl: de.akuz.notification.BroadcastImpl
+pathToState: D:\Projekte\brausteuerung
