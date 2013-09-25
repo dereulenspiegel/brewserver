@@ -28,7 +28,7 @@ public class ArduinoHardware extends AbstractHardwareImpl implements
 		SerialPortEventListener {
 
 	private static enum ArduinoCommand {
-		HEATING_OFF("OFF"), COOK("C"), TEMPERATURE("T");
+		HEATING_OFF("O"), COOK("C"), TEMPERATURE("T"), PID_PARAMS("P");
 
 		private String command;
 
@@ -54,6 +54,7 @@ public class ArduinoHardware extends AbstractHardwareImpl implements
 
 	private SerialPort serialPort;
 	private String portName;
+	private String pidParams;
 
 	private InputStream is;
 	private OutputStream os;
@@ -77,18 +78,21 @@ public class ArduinoHardware extends AbstractHardwareImpl implements
 	}
 
 	/*
-	 * OptionsString port=/dev/tty0
+	 * OptionsString port=/dev/tty0|pid=100;100;100
 	 * 
 	 * @see
 	 * de.akuz.brewserver.hardware.BrewHardwareInterface#setOptions(java.lang
 	 * .String)
 	 */
 	public void setOptions(String options) {
-		String[] parts = options.split(";");
+		String[] parts = options.split("|");
 		for (String s : parts) {
 			String[] keyValue = s.split("=");
 			if ("port".equals(keyValue[0])) {
 				portName = keyValue[1];
+			}
+			if ("pid".equals(keyValue[0])) {
+				pidParams = keyValue[1];
 			}
 		}
 
@@ -114,6 +118,7 @@ public class ArduinoHardware extends AbstractHardwareImpl implements
 
 				serialPort.notifyOnDataAvailable(true);
 				serialPort.addEventListener(this);
+				writeCommand(ArduinoCommand.PID_PARAMS.getCommand() + pidParams);
 			}
 		} catch (NoSuchPortException e) {
 			log.error("SerialPort does not exist", e);
@@ -156,7 +161,12 @@ public class ArduinoHardware extends AbstractHardwareImpl implements
 		if (event.getEventType() == SerialPortEvent.DATA_AVAILABLE) {
 			try {
 				String data = br.readLine();
-				lastTemp = parseLine(data);
+				if (data.startsWith("T")) {
+					lastTemp = parseLine(data);
+				} else {
+					log.warn("Received unexpected line from controller: "
+							+ data);
+				}
 				notifyMeasuredTempChanged(lastTemp);
 			} catch (IOException e) {
 				notifyError(e);
