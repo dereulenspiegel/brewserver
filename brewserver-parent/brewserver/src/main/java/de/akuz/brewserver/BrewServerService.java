@@ -139,6 +139,7 @@ public class BrewServerService extends Service<BrewServerConfiguration> {
 					.newInstance(new Object[] {});
 			hardware.setOptions(optionString);
 			hardware.init();
+			hardware.heatingOff();
 			return hardware;
 		} catch (Exception e) {
 			log.error("Can't instantiate BrewHardwareInterface", e);

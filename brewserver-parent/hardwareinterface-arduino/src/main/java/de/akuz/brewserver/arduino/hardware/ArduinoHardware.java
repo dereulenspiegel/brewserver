@@ -118,6 +118,13 @@ public class ArduinoHardware extends AbstractHardwareImpl implements
 
 				serialPort.notifyOnDataAvailable(true);
 				serialPort.addEventListener(this);
+				try {
+					Thread.sleep(500);
+				} catch (InterruptedException e) {
+					log.warn(
+							"Exception while waiting till the device is ready",
+							e);
+				}
 				writeCommand(ArduinoCommand.PID_PARAMS.getCommand() + pidParams);
 			}
 		} catch (NoSuchPortException e) {
