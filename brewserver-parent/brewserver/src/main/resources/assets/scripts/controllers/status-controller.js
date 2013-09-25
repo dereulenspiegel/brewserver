@@ -13,6 +13,11 @@ function StatusController($scope, $http, $rootScope, $atmosphere) {
 			msg : data
 		});
 	}).success(function(data, status) {
+		if (data.currentStep.stepType == 'NOTIFICATION') {
+			$rootScope.$broadcast('notification-modal', {
+				message : $scope.status.currentStep.message
+			});
+		}
 		$scope.updateStatus(data);
 		$rootScope.$broadcast('status', data);
 	});
@@ -23,7 +28,10 @@ function StatusController($scope, $http, $rootScope, $atmosphere) {
 		var status = JSON.parse(response.responseBody);
 		$scope.updateStatus(status);
 	}, function(error) {
-
+		$rootScope.$broadcast('notification', {
+			msg : error,
+			type : 'error'
+		});
 	});
 
 	$scope.status = {

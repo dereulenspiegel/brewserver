@@ -277,7 +277,8 @@ public class BrewController implements IBrewController, BrewHardwareListener {
 	}
 
 	public void acknowledgeNotificationStep() throws BrewControllerException {
-		if (currentStep.getProcessStep().getStepType() == StepType.NOTIFICATION) {
+		if (currentStep != null
+				&& currentStep.getProcessStep().getStepType() == StepType.NOTIFICATION) {
 			currentStep.acknowledge();
 		} else {
 			throw new IllegalStateException(

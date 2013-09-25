@@ -58,6 +58,17 @@
 		</header>
 		<div id="notification" class="row"
 			ng-controller="NotificationController">
+			<script type="text/ng-template" id="modalNotificationDialog.html">
+        			<div class="modal-header">
+            			<h3>Benachrichtigung!</h3>
+        			</div>
+        			<div class="modal-body">
+            			<p>{{ notification.message }}</p>
+        			</div>
+        			<div class="modal-footer">
+            			<button class="btn btn-primary" ng-click="ok()">Verstanden</button>
+        			</div>
+    			</script>
 			<alert ng-repeat="notification in notifications"
 				type="notification.type" close="closeNotification($index)">{{notification.msg}}</alert>
 		</div>
@@ -74,7 +85,6 @@
 							<highchart config="tempGraph" height="300">
 						</div>
 					</div>
-					</chart>
 					<div class="row" id="statusContainer" ng-show="status.mashing">
 						<div id="progressContainer" ng-show="status.mashing"
 							class="span12">
@@ -159,18 +169,6 @@
 			</pane> </tabs>
 		</div>
 
-		<div id="dialogs" class="hidden">
-			<div id="stop-mash-dialog">
-				<p>Den Maischvorgang wirklich stoppen?</p>
-			</div>
-			<div id="start-mash-dialog">
-				<p>Alles korrekt konfiguriert oder noch etwas vergessen?</p>
-			</div>
-			<div id="http-error-dialog">
-				<h1>Fehler</h1>
-				<p id="http-error-message"></p>
-			</div>
-		</div>
 		<footer class="text-center">
 			Brausteuerung 2013
 			<div>

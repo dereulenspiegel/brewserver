@@ -5,4 +5,5 @@ angular.module('Brausteuerung',
 		 'ui.bootstrap.alert',
 		 'highcharts-ng',
 		 'ng.atmosphere',
-		 'ng-filereader']);
+		 'ng-filereader',
+		 'ui.bootstrap.modal']);
