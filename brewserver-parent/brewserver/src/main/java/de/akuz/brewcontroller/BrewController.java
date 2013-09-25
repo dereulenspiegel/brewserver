@@ -6,6 +6,8 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 
+import javax.annotation.CheckReturnValue;
+
 import org.apache.commons.io.FileUtils;
 import org.apache.commons.lang.StringUtils;
 import org.slf4j.Logger;
@@ -247,8 +249,8 @@ public class BrewController implements IBrewController, BrewHardwareListener {
 					}
 				} else {
 					log.info("Last step was null, so I gues we ware finished");
-					notifyNextStep();
 					resetBrewController();
+					notifyNextStep();
 					interrupt();
 				}
 				serializeState();
@@ -315,6 +317,16 @@ public class BrewController implements IBrewController, BrewHardwareListener {
 	public void setHardware(BrewHardwareInterface hardware) {
 		this.hardware = hardware;
 
+	}
+
+	public void startCooking() throws BrewControllerException {
+		checkNotRunning();
+		hardware.cook();
+	}
+
+	public void stopCooking() throws BrewControllerException {
+		checkNotRunning();
+		hardware.heatingOff();
 	}
 
 }

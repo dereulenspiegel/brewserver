@@ -23,6 +23,7 @@ import de.akuz.brewserver.resources.BrewControllerExceptionMapper;
 import de.akuz.brewserver.resources.BrewServerSetProcessConfiguration;
 import de.akuz.brewserver.resources.BrewServerStartResource;
 import de.akuz.brewserver.resources.BrewServerStopResource;
+import de.akuz.brewserver.resources.CookingResource;
 import de.akuz.brewserver.resources.FullStateResource;
 
 public class BrewServerService extends Service<BrewServerConfiguration> {
@@ -49,6 +50,7 @@ public class BrewServerService extends Service<BrewServerConfiguration> {
 		environment.addResource(BrewServerStartResource.class);
 		environment.addResource(BrewServerStopResource.class);
 		environment.addResource(FullStateResource.class);
+		environment.addResource(CookingResource.class);
 		environment.addHealthCheck(new BrewServerHealthCheck());
 		environment.addProvider(BrewControllerExceptionMapper.class);
 		environment.addLifeCycleListener(new Listener() {
@@ -136,6 +138,7 @@ public class BrewServerService extends Service<BrewServerConfiguration> {
 			BrewHardwareInterface hardware = brewHardwareConstructor
 					.newInstance(new Object[] {});
 			hardware.setOptions(optionString);
+			hardware.init();
 			return hardware;
 		} catch (Exception e) {
 			log.error("Can't instantiate BrewHardwareInterface", e);

@@ -36,4 +36,8 @@ public interface IBrewController {
 
 	public void setSerialiaztionPath(String path);
 
+	public void startCooking() throws BrewControllerException;
+
+	public void stopCooking() throws BrewControllerException;
+
 }
