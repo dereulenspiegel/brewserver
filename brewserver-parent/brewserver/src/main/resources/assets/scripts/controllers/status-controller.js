@@ -59,11 +59,12 @@ function StatusController($scope, $http, $rootScope, $atmosphere) {
 			xAxis : {
 				type : 'linear',
 				maxZoom : 10, // 10 minutes
+				min : 0,
 				title : {
 					text : null
 				},
 				title : {
-					text : 'Sekunden',
+					text : 'Minuten',
 					y : 1
 				}
 			},
@@ -98,7 +99,10 @@ function StatusController($scope, $http, $rootScope, $atmosphere) {
 
 			plotOptions : {
 				line : {
-					dashStyle : 'Solid'
+					dashStyle : 'Solid',
+					marker : {
+						enabled : false
+					}
 				}
 			},
 
@@ -220,6 +224,7 @@ function StatusController($scope, $http, $rootScope, $atmosphere) {
 				type : 'success',
 				msg : 'Maischvorgang gestartet'
 			});
+			$scope.tempGraph.series[0].data = [];
 		});
 	};
 
@@ -242,7 +247,7 @@ function StatusController($scope, $http, $rootScope, $atmosphere) {
 			$scope.$apply(function() {
 				if (status.currentTemp && status.timeRunning) {
 					$scope.tempGraph.series[0].data.push([
-							(parseInt(status.timeRunning) / 1000),
+							(parseInt(status.timeRunning) / 60000),
 							status.currentTemp ]);
 				}
 			});

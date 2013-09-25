@@ -100,8 +100,10 @@ public class BrewServerService extends Service<BrewServerConfiguration> {
 
 	private void initializeAtmosphere(BrewServerConfiguration configuration,
 			Environment environment) {
+		String atmosphereUrl = parseRootUrl(configuration
+				.getHttpConfiguration().getRootPath()) + "status/";
 		FilterBuilder fconfig = environment.addFilter(CrossOriginFilter.class,
-				"/control/status/*");
+				atmosphereUrl + "*");
 		fconfig.setInitParam(CrossOriginFilter.ALLOWED_ORIGINS_PARAM, "*");
 
 		AtmosphereServlet atmosphereServlet = new AtmosphereServlet();
@@ -116,7 +118,11 @@ public class BrewServerService extends Service<BrewServerConfiguration> {
 		// "org.atmosphere.cpr.broadcastFilterClasses",
 		// "com.example.helloworld.filters.BadWordFilter");
 		// TODO mount correctly via config
-		environment.addServlet(atmosphereServlet, "/control/status/*");
+		environment.addServlet(atmosphereServlet, atmosphereUrl + "*");
+	}
+
+	private String parseRootUrl(String rootPath) {
+		return rootPath.substring(0, rootPath.length() - 1);
 	}
 
 	private BrewHardwareInterface loadBrewHardwareImplementation(

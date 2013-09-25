@@ -9,24 +9,14 @@ public class BrewServerConfiguration extends Configuration {
 
 	private HardwareConfiguration hardwareConfig;
 
-	@NotEmpty
-	@JsonProperty
-	private String notificationImpl;
+	private NotificationConfiguration notificationConfig;
 
 	@NotEmpty
 	@JsonProperty
 	private String pathToState;
 
-	public String getNotificationImpl() {
-		return notificationImpl;
-	}
-
 	public String getPathToState() {
 		return pathToState;
-	}
-
-	public void setNotificationImpl(String notificationImpl) {
-		this.notificationImpl = notificationImpl;
 	}
 
 	public void setPathToState(String pathToState) {
@@ -39,6 +29,15 @@ public class BrewServerConfiguration extends Configuration {
 
 	public void setHardwareConfig(HardwareConfiguration hardwareConfig) {
 		this.hardwareConfig = hardwareConfig;
+	}
+
+	public NotificationConfiguration getNotificationConfig() {
+		return notificationConfig;
+	}
+
+	public void setNotificationConfig(
+			NotificationConfiguration notificationConfiguration) {
+		this.notificationConfig = notificationConfiguration;
 	}
 
 }

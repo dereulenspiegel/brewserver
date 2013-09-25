@@ -78,6 +78,10 @@ public class BrewController implements IBrewController, BrewHardwareListener {
 	}
 
 	public void stopMashing() {
+		resetBrewController();
+	}
+
+	private void resetBrewController() {
 		state.setRunning(false);
 		if (processThread != null) {
 			processThread.interrupt();
@@ -133,25 +137,25 @@ public class BrewController implements IBrewController, BrewHardwareListener {
 		}
 	}
 
-	private void handleMashStep(InternalProcessStep step) {
-		hardware.setTargetTemperature(step.getTargetTemp());
-	}
-
-	private void handleNotificationStep(InternalProcessStep step) {
-		// TODO notify
-	}
-
 	private void serializeState() {
 		File path = new File(serializationPath);
+		if (!path.exists()) {
+			try {
+				FileUtils.forceMkdir(path);
+			} catch (IOException e) {
+				log.error("Can't create path for serialization of state", e);
+			}
+		}
 		File stateFile = new File(path, generateFileName());
-		File oldStateFileName = new File(path, generateFileName() + ".old");
+		File oldStateFile = new File(path, generateFileName() + ".old");
 		try {
-			if (oldStateFileName.exists()) {
-				FileUtils.forceDelete(oldStateFileName);
+			if (oldStateFile.exists()) {
+				FileUtils.forceDelete(oldStateFile);
 			}
 			if (stateFile.exists()) {
-				FileUtils.copyFile(stateFile, oldStateFileName);
+				FileUtils.copyFile(stateFile, oldStateFile);
 				FileUtils.forceDelete(stateFile);
+				stateFile.createNewFile();
 			}
 			jacksonMapper.writeValue(stateFile, state);
 		} catch (IOException e) {
@@ -190,6 +194,7 @@ public class BrewController implements IBrewController, BrewHardwareListener {
 	private void checkSerialization() {
 		if (System.currentTimeMillis() + serializationInterval > lastStateSerialization) {
 			serializeState();
+			lastStateSerialization = System.currentTimeMillis();
 		}
 	}
 
@@ -242,9 +247,8 @@ public class BrewController implements IBrewController, BrewHardwareListener {
 					}
 				} else {
 					log.info("Last step was null, so I gues we ware finished");
-					hardware.heatingOff();
-					state.setRunning(false);
 					notifyNextStep();
+					resetBrewController();
 					interrupt();
 				}
 				serializeState();
@@ -281,7 +285,7 @@ public class BrewController implements IBrewController, BrewHardwareListener {
 				&& currentStep.getProcessStep().getStepType() == StepType.NOTIFICATION) {
 			currentStep.acknowledge();
 		} else {
-			throw new IllegalStateException(
+			throw new BrewControllerStateException(
 					"Current step can't be acknowledged");
 		}
 

@@ -38,6 +38,7 @@ function BrewConfigController($scope, $http, $rootScope) {
 	$scope.clearProcessSteps = function() {
 		$scope.config.processSteps = [];
 		$scope.clearFields();
+		$scope.config.name = '';
 	};
 
 	$scope.saveConfig = function() {
@@ -77,7 +78,6 @@ function BrewConfigController($scope, $http, $rootScope) {
 		$scope.targetTemp = '';
 		$scope.stepTime = '';
 		$scope.stepMessage = '';
-		$scope.config.name = '';
 	};
 
 	$scope.readBeerXML = function() {
