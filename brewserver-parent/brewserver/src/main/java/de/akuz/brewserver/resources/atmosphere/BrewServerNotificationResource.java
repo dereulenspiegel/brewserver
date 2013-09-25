@@ -7,21 +7,31 @@ import javax.ws.rs.Path;
 import javax.ws.rs.Produces;
 import javax.ws.rs.core.MediaType;
 
-import org.atmosphere.annotation.Suspend;
+import org.atmosphere.cpr.Broadcaster;
+import org.atmosphere.cpr.BroadcasterFactory;
+import org.atmosphere.jersey.SuspendResponse;
 
 import de.akuz.brewcontroller.BrewControllerException;
 import de.akuz.brewserver.objects.Notification;
 import de.akuz.brewserver.resources.AbstractBrewServerResource;
 
-@Path("/notification")
+@Path("/notify")
 @Produces(MediaType.APPLICATION_JSON)
 @Consumes(MediaType.APPLICATION_JSON)
 public class BrewServerNotificationResource extends AbstractBrewServerResource {
 
-	@Suspend
+	private Broadcaster broadcaster;
+
+	public BrewServerNotificationResource() {
+		broadcaster = BroadcasterFactory.getDefault().lookup("/notify", true);
+	}
+
 	@GET
-	public Notification broadcastNotification() {
-		return null;
+	public SuspendResponse<Notification> subscribe() {
+		SuspendResponse<Notification> suspendedResponse;
+		suspendedResponse = new SuspendResponse.SuspendResponseBuilder<Notification>()
+				.broadcaster(broadcaster).outputComments(true).build();
+		return suspendedResponse;
 	}
 
 	@POST

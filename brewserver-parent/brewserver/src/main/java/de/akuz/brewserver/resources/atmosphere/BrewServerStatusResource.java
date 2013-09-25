@@ -37,10 +37,4 @@ public class BrewServerStatusResource extends AbstractBrewServerResource {
 		return suspendedResponse;
 	}
 
-	private State getCurrentState() {
-		State state = convertFromBrewControllerState(brewController
-				.getCurrentState());
-		return state;
-	}
-
 }

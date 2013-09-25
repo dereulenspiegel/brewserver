@@ -1,6 +1,7 @@
 package de.akuz.brewserver.objects.internal;
 
 import de.akuz.brewcontroller.IProcessStep;
+import de.akuz.brewcontroller.NotificationManager;
 import de.akuz.brewserver.hardware.BrewHardwareInterface;
 import de.akuz.brewserver.hardware.BrewHardwareInterface.BrewHardwareListener;
 import de.akuz.brewserver.objects.ProcessStep;
@@ -26,7 +27,7 @@ public class InternalProcessStep implements IProcessStep, BrewHardwareListener {
 	 * NotificationStep
 	 */
 	private String message;
-	private boolean acknowledged;
+	private boolean acknowledged = false;
 
 	public InternalProcessStep(ProcessStep receivedStep) {
 		this.processStep = receivedStep;
@@ -50,6 +51,8 @@ public class InternalProcessStep implements IProcessStep, BrewHardwareListener {
 	public void start() {
 		if (processStep.getStepType() == StepType.MASH) {
 			hardware.setTargetTemperature(targetTemp);
+		} else if (processStep.getStepType() == StepType.NOTIFICATION) {
+			NotificationManager.getInstance().notify(message);
 		}
 	}
 

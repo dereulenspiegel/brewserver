@@ -16,6 +16,7 @@ import com.yammer.dropwizard.config.Environment;
 import com.yammer.dropwizard.config.FilterBuilder;
 
 import de.akuz.brewcontroller.BrewController;
+import de.akuz.brewcontroller.NotificationManager;
 import de.akuz.brewserver.configuration.BrewServerConfiguration;
 import de.akuz.brewserver.hardware.BrewHardwareInterface;
 import de.akuz.brewserver.resources.BrewControllerExceptionMapper;
@@ -69,6 +70,7 @@ public class BrewServerService extends Service<BrewServerConfiguration> {
 
 			public void lifeCycleStarted(LifeCycle arg0) {
 				configureBrewController(configuration);
+				configureAtmosphereNotifier();
 
 			}
 
@@ -80,10 +82,16 @@ public class BrewServerService extends Service<BrewServerConfiguration> {
 
 	}
 
+	private void configureAtmosphereNotifier() {
+		AtmosphereNotifier notifier = new AtmosphereNotifier();
+		NotificationManager.getInstance().registerNotifier(notifier);
+	}
+
 	private void configureBrewController(BrewServerConfiguration configuration) {
 		BrewController controller = BrewController.getInstance();
 		controller.setSerialiaztionPath(configuration.getPathToState());
-		controller.registerBrewControllerListener(new BrewServerAtmosphereListener());
+		controller
+				.registerBrewControllerListener(new BrewServerAtmosphereListener());
 		BrewHardwareInterface hardware = loadBrewHardwareImplementation(
 				configuration.getHardwareConfig().getHardwareImpl(),
 				configuration.getHardwareConfig().getHardwareOptions());
