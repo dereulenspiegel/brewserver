@@ -21,6 +21,7 @@ import de.akuz.brewserver.configuration.BrewServerConfiguration;
 import de.akuz.brewserver.hardware.BrewHardwareInterface;
 import de.akuz.brewserver.resources.BrewControllerExceptionMapper;
 import de.akuz.brewserver.resources.BrewServerSetProcessConfiguration;
+import de.akuz.brewserver.resources.BrewServerSetTempResource;
 import de.akuz.brewserver.resources.BrewServerStartResource;
 import de.akuz.brewserver.resources.BrewServerStopResource;
 import de.akuz.brewserver.resources.CookingResource;
@@ -51,6 +52,7 @@ public class BrewServerService extends Service<BrewServerConfiguration> {
 		environment.addResource(BrewServerStopResource.class);
 		environment.addResource(FullStateResource.class);
 		environment.addResource(CookingResource.class);
+		environment.addResource(BrewServerSetTempResource.class);
 		environment.addHealthCheck(new BrewServerHealthCheck());
 		environment.addProvider(BrewControllerExceptionMapper.class);
 		environment.addLifeCycleListener(new Listener() {

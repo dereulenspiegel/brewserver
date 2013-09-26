@@ -4,6 +4,7 @@ public class State {
 
 	private long timeRunning;
 	private boolean mashing;
+	private boolean cooking;
 	private float currentTemp;
 	private boolean stepStarted;
 	private long timeLeft;
@@ -75,5 +76,13 @@ public class State {
 
 	public void setTimeRunning(long timeRunning) {
 		this.timeRunning = timeRunning;
+	}
+
+	public boolean isCooking() {
+		return cooking;
+	}
+
+	public void setCooking(boolean cooking) {
+		this.cooking = cooking;
 	}
 }

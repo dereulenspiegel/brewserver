@@ -92,8 +92,8 @@
 							<div id="stepProgress"></div>
 						</div>
 						<div id="progressStepsContainer" class="span12"
-							ng-show="allProcessSteps.length > 0">
-							<ul ng-model="allProcessSteps">
+							ng-show="status.processSteps.length > 0">
+							<ul ng-model="status.processSteps">
 								<li ng-repeat=" step in allProcessSteps"><span
 									ng-show="'MASH' == step.stepType.type">{{step.stepType.name}}:
 										{{step.name}} bei {{step.targetTemp}} Grad Celsius f&uuml;r
@@ -107,11 +107,24 @@
 				</div>
 				<div class="row">
 					<button class="btn-primary btn-large" id="start-mash-button"
-						ng-show="!status.mashing" ng-click="startMash()">Maischvorgang
-						starten</button>
+						ng-show="!status.mashing && !status.cooking"
+						ng-click="startMash()">Maischvorgang starten</button>
 					<button class="btn-primary btn-large" id="stop-mash-button"
-						ng-show="status.mashing" ng-click="stopMash()">Maischvorgang
+						ng-show="status.mashing && !status.cooking" ng-click="stopMash()">Maischvorgang
 						stoppen</button>
+					<button class="btn-primary btn-large" id="start-cook-button"
+						ng-show="!status.mashing && !status.cooking"
+						ng-click="startCooking()">Kochen starten</button>
+					<button class="btn-primary btn-large" id="stop-cooking-button"
+						ng-show="!status.mashing && status.cooking"
+						ng-click="stopCooking()">Heizung aus</button>
+					<div class="row">
+						<input type="number" ng-model="targetTemp"
+							placeholder="Temperatur" />
+						<button class="btn-primary"
+							ng-show="!status.mashing && !status.cooking"
+							ng-click="setFixedTemperature()">Temperatur halten</button>
+					</div>
 				</div>
 			</div>
 			</pane> <pane title="Konfiguration">

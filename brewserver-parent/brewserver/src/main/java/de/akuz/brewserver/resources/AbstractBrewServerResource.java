@@ -29,11 +29,13 @@ public abstract class AbstractBrewServerResource {
 	protected FullState getFullState() {
 		BrewControllerState controllerState = brewController.getCurrentState();
 		FullState state = new FullState();
-		state.setCurrentStep(controllerState.getCurrentStep().getProcessStep());
+		state.setCurrentStep(controllerState.getCurrentStep() != null ? controllerState
+				.getCurrentStep().getProcessStep() : null);
 		state.setCurrentStepNumber(controllerState.getCurrentStepNumber());
 		state.setCurrentTemp(controllerState.getLastTemp());
 		state.setMashing(controllerState.isRunning());
 		state.setName(controllerState.getName());
+		state.setCooking(controllerState.isCooking());
 		List<ProcessStep> processSteps = new ArrayList<ProcessStep>(
 				controllerState.getProcessSteps().size());
 		for (InternalProcessStep internalStep : controllerState

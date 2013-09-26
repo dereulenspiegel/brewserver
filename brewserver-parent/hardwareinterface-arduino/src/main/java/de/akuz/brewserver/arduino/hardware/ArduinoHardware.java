@@ -85,14 +85,18 @@ public class ArduinoHardware extends AbstractHardwareImpl implements
 	 * .String)
 	 */
 	public void setOptions(String options) {
-		String[] parts = options.split("|");
+		String[] parts = options.split("\\|");
 		for (String s : parts) {
 			String[] keyValue = s.split("=");
-			if ("port".equals(keyValue[0])) {
-				portName = keyValue[1];
-			}
-			if ("pid".equals(keyValue[0])) {
-				pidParams = keyValue[1];
+			if (keyValue.length == 2) {
+				if ("port".equals(keyValue[0])) {
+					portName = keyValue[1];
+				}
+				if ("pid".equals(keyValue[0])) {
+					pidParams = keyValue[1];
+				}
+			} else {
+				log.warn("Invalid configuration value: " + s);
 			}
 		}
 

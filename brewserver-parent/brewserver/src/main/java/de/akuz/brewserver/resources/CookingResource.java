@@ -5,12 +5,13 @@ import javax.ws.rs.Path;
 import javax.ws.rs.PathParam;
 
 import de.akuz.brewcontroller.BrewControllerException;
+import de.akuz.brewserver.objects.State;
 
-@Path(AbstractBrewServerResource.PRIVATE_PATH + "/cook/{state}")
+@Path(AbstractBrewServerResource.PRIVATE_PATH + "cook/{state}")
 public class CookingResource extends AbstractBrewServerResource {
 
 	@GET
-	public void getTemp(@PathParam("state") String state)
+	public State getTemp(@PathParam("state") String state)
 			throws BrewControllerException {
 		if ("start".equals(state)) {
 			brewController.startCooking();
@@ -19,6 +20,7 @@ public class CookingResource extends AbstractBrewServerResource {
 		} else {
 			throw new BrewControllerException("Unbekanntes Kommando: " + state);
 		}
+		return getFullState();
 	}
 
 }

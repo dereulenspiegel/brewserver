@@ -36,6 +36,7 @@ function StatusController($scope, $http, $rootScope, $atmosphere) {
 
 	$scope.status = {
 		mashing : false,
+		cooking : false,
 		currentTemp : null,
 		currentStep : {},
 		totalSteps : 0,
@@ -46,6 +47,8 @@ function StatusController($scope, $http, $rootScope, $atmosphere) {
 		processSteps : [],
 		tempPoints : []
 	};
+
+	$scope.targetTemp = null;
 
 	$scope.tempGraph = {
 
@@ -272,5 +275,62 @@ function StatusController($scope, $http, $rootScope, $atmosphere) {
 			});
 		});
 	};
+
+	$scope.startCooking = function() {
+		$http({
+			method : 'GET',
+			url : document.location.toString() + 'control/private/cook/start'
+		}).error(function(data, status, headers, config) {
+			$rootScope.$broadcast('notification', {
+				type : 'error',
+				msg : data
+			});
+		}).success(function(data, status) {
+			$scope.updateStatus(status);
+			$rootScope.$broadcast('notification', {
+				type : 'success',
+				msg : 'Kochen gestartet'
+			});
+		});
+	};
+
+	$scope.stopCooking = function() {
+		$http({
+			method : 'GET',
+			url : document.location.toString() + 'control/private/cook/stop'
+		}).error(function(data, status, headers, config) {
+			$rootScope.$broadcast('notification', {
+				type : 'error',
+				msg : data
+			});
+		}).success(function(data, status) {
+			$scope.updateStatus(status);
+			$rootScope.$broadcast('notification', {
+				type : 'success',
+				msg : 'Kochen gestoppt'
+			});
+		});
+	};
+
+	$scope.setFixedTemperature = function() {
+		$http({
+			method : 'POST',
+			data : {
+				targetTemp : $scope.targetTemp
+			},
+			url : document.location.toString() + 'control/private/temp'
+		}).error(function(data, status, headers, config) {
+			$rootScope.$broadcast('notification', {
+				type : 'error',
+				msg : data
+			});
+		}).success(function(data, status) {
+			$scope.updateStatus(status);
+			$rootScope.$broadcast('notification', {
+				type : 'success',
+				msg : 'Temperatur wird auf ' + $scope.targetTemp + ' gehalten'
+			});
+		});
+	}
 
 }

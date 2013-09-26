@@ -21,6 +21,7 @@ public class BrewControllerState implements Serializable {
 	private List<InternalProcessStep> processSteps = new ArrayList<InternalProcessStep>();
 	private float lastTemp;
 	private boolean running;
+	private boolean cooking;
 
 	private long timeStarted;
 
@@ -123,6 +124,14 @@ public class BrewControllerState implements Serializable {
 	@JsonIgnore
 	public long getTimeRunning() {
 		return System.currentTimeMillis() - timeStarted;
+	}
+
+	public boolean isCooking() {
+		return cooking;
+	}
+
+	public void setCooking(boolean cooking) {
+		this.cooking = cooking;
 	}
 
 }

@@ -6,8 +6,6 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 
-import javax.annotation.CheckReturnValue;
-
 import org.apache.commons.io.FileUtils;
 import org.apache.commons.lang.StringUtils;
 import org.slf4j.Logger;
@@ -321,11 +319,13 @@ public class BrewController implements IBrewController, BrewHardwareListener {
 
 	public void startCooking() throws BrewControllerException {
 		checkNotRunning();
+		state.setCooking(true);
 		hardware.cook();
 	}
 
 	public void stopCooking() throws BrewControllerException {
 		checkNotRunning();
+		state.setCooking(false);
 		hardware.heatingOff();
 	}
 

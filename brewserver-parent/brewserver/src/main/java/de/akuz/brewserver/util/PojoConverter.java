@@ -21,6 +21,7 @@ public class PojoConverter {
 		state.setMashing(brewState.isRunning());
 		state.setTimeRunning(System.currentTimeMillis()
 				- brewState.getTimeStarted());
+		state.setCooking(brewState.isCooking());
 		if (brewState.getCurrentStep() != null) {
 			state.setStepStarted(brewState.getCurrentStep().isMashStepStarted());
 			state.setTimeLeft(brewState.getCurrentStep().getTimeLeft());

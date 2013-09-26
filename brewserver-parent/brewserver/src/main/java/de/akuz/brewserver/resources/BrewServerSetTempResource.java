@@ -9,7 +9,7 @@ import javax.ws.rs.core.MediaType;
 
 import de.akuz.brewserver.objects.SetTemp;
 
-@Path(AbstractBrewServerResource.PRIVATE_PATH + "/temp")
+@Path(AbstractBrewServerResource.PRIVATE_PATH + "temp")
 public class BrewServerSetTempResource extends AbstractBrewServerResource {
 
 	@POST
