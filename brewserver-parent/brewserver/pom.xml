@@ -18,11 +18,25 @@
 		<version>0.0.1-SNAPSHOT</version>
 	</parent>
 
+	<repositories>
+		<!--other repositories if any -->
+		<repository>
+			<id>project.local</id>
+			<name>project</name>
+			<url>file:${project.basedir}/repo</url>
+		</repository>
+	</repositories>
+
 	<dependencies>
 		<dependency>
 			<groupId>de.akuz.brewserver</groupId>
 			<artifactId>brewserver-objects</artifactId>
 			<version>${version}</version>
+		</dependency>
+		<dependency>
+			<groupId>nrjavaserial.googlecode.com</groupId>
+			<artifactId>nrjavaserial</artifactId>
+			<version>3.8.8</version>
 		</dependency>
 	</dependencies>
 

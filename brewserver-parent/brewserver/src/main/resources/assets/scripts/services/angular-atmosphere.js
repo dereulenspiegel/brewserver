@@ -52,6 +52,7 @@ angular
 								request.fallbackTransport = 'long-polling';
 								request.onMessage = onMessage;
 								request.onError = onError;
+								request.logLevel = 'debug';
 
 								var connection = $.atmosphere
 										.subscribe(request);

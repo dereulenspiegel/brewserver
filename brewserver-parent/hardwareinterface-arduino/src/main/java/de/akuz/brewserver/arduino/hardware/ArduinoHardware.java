@@ -173,12 +173,15 @@ public class ArduinoHardware extends AbstractHardwareImpl implements
 			try {
 				String data = br.readLine();
 				if (data.startsWith("T")) {
-					lastTemp = parseLine(data);
+					float newTemp = parseLine(data);
+					if (newTemp != lastTemp) {
+						lastTemp = newTemp;
+						notifyMeasuredTempChanged(newTemp);
+					}
 				} else {
 					log.warn("Received unexpected line from controller: "
 							+ data);
 				}
-				notifyMeasuredTempChanged(lastTemp);
 			} catch (IOException e) {
 				notifyError(e);
 			}

@@ -94,7 +94,7 @@
 						<div id="progressStepsContainer" class="span12"
 							ng-show="status.processSteps.length > 0">
 							<ul ng-model="status.processSteps">
-								<li ng-repeat=" step in allProcessSteps"><span
+								<li ng-repeat="step in status.processSteps"><span
 									ng-show="'MASH' == step.stepType.type">{{step.stepType.name}}:
 										{{step.name}} bei {{step.targetTemp}} Grad Celsius f&uuml;r
 										{{step.stepTime | minutes}} Minuten</span> <span
@@ -120,6 +120,7 @@
 						ng-click="stopCooking()">Heizung aus</button>
 					<div class="row">
 						<input type="number" ng-model="targetTemp"
+							ng-show="!status.mashing && !status.cooking"
 							placeholder="Temperatur" />
 						<button class="btn-primary"
 							ng-show="!status.mashing && !status.cooking"

@@ -237,7 +237,7 @@ function StatusController($scope, $http, $rootScope, $atmosphere) {
 			var tempPoints = $scope.status.tempPoints;
 			var name = $scope.status.name;
 			$scope.status = status;
-			if (!status.processSteps) {
+			if (!status.processSteps || status.processSteps.length === 0) {
 				$scope.status.processSteps = processSteps;
 				$scope.status.tempPoints = tempPoints;
 				$scope.status.name = name;
@@ -246,14 +246,19 @@ function StatusController($scope, $http, $rootScope, $atmosphere) {
 		$scope.$apply(function() {
 			$scope.tempGauge.series[0].data[0] = status.currentTemp;
 		});
-		if (status.timeRunning > 0) {
-			$scope.$apply(function() {
-				if (status.currentTemp && status.timeRunning) {
+		if (status.timeRunning && status.timeRunning > 0) {
+			if (status.tempPoints && status.tempPoints.length > 1) {
+				$scope.tempGraph.series[0].data = [];
+				for ( var i = 0; i < status.tempPoints.length; i++) {
+					var tempPoint = status.tempPoints[i];
 					$scope.tempGraph.series[0].data.push([
-							(parseInt(status.timeRunning) / 60000),
-							status.currentTemp ]);
+							tempPoint.time / (1000 * 60), tempPoint.temp ]);
 				}
-			});
+			} else if (status.currentTemp && status.timeRunning) {
+				$scope.tempGraph.series[0].data.push([
+						(parseInt(status.timeRunning) / 60000),
+						status.currentTemp ]);
+			}
 		}
 		$rootScope.$broadcast('status', status);
 	}

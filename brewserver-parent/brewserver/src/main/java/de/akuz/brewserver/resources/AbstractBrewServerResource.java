@@ -43,8 +43,9 @@ public abstract class AbstractBrewServerResource {
 			processSteps.add(internalStep.getProcessStep());
 		}
 		state.setProcessSteps(processSteps);
-		// state.setTimeLeft(timeLeft);
-		// state.setTimeRunning(timeRunning);
+		state.setTimeRunning(controllerState.getTimeRunning());
+
+		state.setTempPoints(controllerState.getTempLog().getTempPoints());
 		state.setTotalSteps(controllerState.getProcessSteps().size());
 		return state;
 	}
