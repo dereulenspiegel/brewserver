@@ -113,7 +113,7 @@ public class ArduinoHardware extends AbstractHardwareImpl implements
 				this.serialPort = (SerialPort) commPort;
 				this.serialPort.setSerialPortParams(9600,
 						SerialPort.DATABITS_8, SerialPort.STOPBITS_1,
-						SerialPort.PARITY_EVEN);
+						SerialPort.PARITY_NONE);
 
 				is = this.serialPort.getInputStream();
 				os = this.serialPort.getOutputStream();
@@ -160,6 +160,7 @@ public class ArduinoHardware extends AbstractHardwareImpl implements
 			bw.flush();
 			bw.close();
 			br.close();
+			serialPort.removeEventListener();
 			serialPort.close();
 		} catch (IOException e) {
 			log.error("Error while closing SerialPort", e);
