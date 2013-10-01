@@ -18,10 +18,9 @@ public class PojoConverter {
 		state.setCurrentStepNumber(brewState.getCurrentStepNumber());
 		state.setCurrentTemp(brewState.getLastTemp());
 		state.setTotalSteps(brewState.getProcessSteps().size());
-		state.setMashing(brewState.isRunning());
 		state.setTimeRunning(System.currentTimeMillis()
 				- brewState.getTimeStarted());
-		state.setCooking(brewState.isCooking());
+		state.setOperationMode(brewState.getOperationMode());
 		if (brewState.getCurrentStep() != null) {
 			state.setStepStarted(brewState.getCurrentStep().isMashStepStarted());
 			state.setTimeLeft(brewState.getCurrentStep().getTimeLeft());

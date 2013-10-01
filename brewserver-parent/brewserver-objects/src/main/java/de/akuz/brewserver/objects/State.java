@@ -2,9 +2,12 @@ package de.akuz.brewserver.objects;
 
 public class State {
 
+	public static enum MODE {
+		MASHING, COOKING, FIXED_TEMP, OFF;
+	}
+
 	private long timeRunning;
-	private boolean mashing;
-	private boolean cooking;
+	private MODE operationMode;
 	private float currentTemp;
 	private boolean stepStarted;
 	private long timeLeft;
@@ -13,14 +16,6 @@ public class State {
 	private int totalSteps;
 
 	private ProcessStep currentStep;
-
-	public boolean isMashing() {
-		return mashing;
-	}
-
-	public void setMashing(boolean mashing) {
-		this.mashing = mashing;
-	}
 
 	public float getCurrentTemp() {
 		return currentTemp;
@@ -78,11 +73,12 @@ public class State {
 		this.timeRunning = timeRunning;
 	}
 
-	public boolean isCooking() {
-		return cooking;
+	public MODE getOperationMode() {
+		return operationMode;
 	}
 
-	public void setCooking(boolean cooking) {
-		this.cooking = cooking;
+	public void setOperationMode(MODE operationMode) {
+		this.operationMode = operationMode;
 	}
+
 }

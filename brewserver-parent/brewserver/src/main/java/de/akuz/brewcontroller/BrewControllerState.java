@@ -6,6 +6,7 @@ import java.util.List;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
 
+import de.akuz.brewserver.objects.State.MODE;
 import de.akuz.brewserver.objects.internal.InternalProcessStep;
 
 public class BrewControllerState implements Serializable {
@@ -20,8 +21,7 @@ public class BrewControllerState implements Serializable {
 	private int currentStepNumber = -1;
 	private List<InternalProcessStep> processSteps = new ArrayList<InternalProcessStep>();
 	private float lastTemp;
-	private boolean running;
-	private boolean cooking;
+	private MODE operationMode = MODE.OFF;
 
 	private long timeStarted;
 
@@ -86,15 +86,11 @@ public class BrewControllerState implements Serializable {
 		this.lastTemp = lastTemp;
 	}
 
-	public boolean isRunning() {
-		return running;
-	}
-
-	public void setRunning(boolean running) {
-		if (running) {
+	public void setRunning(MODE mode) {
+		if (mode == MODE.MASHING) {
 			timeStarted = System.currentTimeMillis();
 		}
-		this.running = running;
+		this.operationMode = mode;
 	}
 
 	public String getName() {
@@ -126,12 +122,12 @@ public class BrewControllerState implements Serializable {
 		return System.currentTimeMillis() - timeStarted;
 	}
 
-	public boolean isCooking() {
-		return cooking;
+	public MODE getOperationMode() {
+		return operationMode;
 	}
 
-	public void setCooking(boolean cooking) {
-		this.cooking = cooking;
+	public void setOperationMode(MODE operationMode) {
+		this.operationMode = operationMode;
 	}
 
 }

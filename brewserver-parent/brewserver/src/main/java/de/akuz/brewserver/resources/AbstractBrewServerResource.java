@@ -33,9 +33,8 @@ public abstract class AbstractBrewServerResource {
 				.getCurrentStep().getProcessStep() : null);
 		state.setCurrentStepNumber(controllerState.getCurrentStepNumber());
 		state.setCurrentTemp(controllerState.getLastTemp());
-		state.setMashing(controllerState.isRunning());
+		state.setOperationMode(controllerState.getOperationMode());
 		state.setName(controllerState.getName());
-		state.setCooking(controllerState.isCooking());
 		List<ProcessStep> processSteps = new ArrayList<ProcessStep>(
 				controllerState.getProcessSteps().size());
 		for (InternalProcessStep internalStep : controllerState

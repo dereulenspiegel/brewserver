@@ -110,7 +110,7 @@ function BrewConfigController($scope, $http, $rootScope) {
 	}
 
 	$scope.$on('status', function(event, status) {
-		$scope.editable = !status.mashing;
+		$scope.editable = status.operationMode === 'OFF';
 	});
 
 }

@@ -19,7 +19,6 @@ function StatusController($scope, $http, $rootScope, $atmosphere) {
 			});
 		}
 		$scope.updateStatus(data);
-		$rootScope.$broadcast('status', data);
 	});
 
 	$atmosphere.init({
@@ -35,8 +34,7 @@ function StatusController($scope, $http, $rootScope, $atmosphere) {
 	});
 
 	$scope.status = {
-		mashing : false,
-		cooking : false,
+		operationMode : 'OFF',
 		currentTemp : null,
 		currentStep : {},
 		totalSteps : 0,
@@ -204,14 +202,6 @@ function StatusController($scope, $http, $rootScope, $atmosphere) {
 
 	};
 
-	$scope.onStatus = function(response) {
-		var status = JSON.parse(response.responseBody);
-	};
-
-	$scope.onWSSError = function(error) {
-
-	};
-
 	$scope.startMash = function() {
 		$http({
 			method : 'GET',
@@ -222,7 +212,7 @@ function StatusController($scope, $http, $rootScope, $atmosphere) {
 				msg : data
 			});
 		}).success(function(data, status) {
-			$scope.updateStatus(status);
+			$scope.updateStatus(data);
 			$rootScope.$broadcast('notification', {
 				type : 'success',
 				msg : 'Maischvorgang gestartet'
@@ -232,20 +222,16 @@ function StatusController($scope, $http, $rootScope, $atmosphere) {
 	};
 
 	$scope.updateStatus = function(status) {
-		$scope.$apply(function() {
-			var processSteps = $scope.status.processSteps;
-			var tempPoints = $scope.status.tempPoints;
-			var name = $scope.status.name;
-			$scope.status = status;
-			if (!status.processSteps || status.processSteps.length === 0) {
-				$scope.status.processSteps = processSteps;
-				$scope.status.tempPoints = tempPoints;
-				$scope.status.name = name;
-			}
-		});
-		$scope.$apply(function() {
-			$scope.tempGauge.series[0].data[0] = status.currentTemp;
-		});
+		var processSteps = $scope.status.processSteps;
+		var tempPoints = $scope.status.tempPoints;
+		var name = $scope.status.name;
+		$scope.status = status;
+		if (!status.processSteps || status.processSteps.length === 0) {
+			$scope.status.processSteps = processSteps;
+			$scope.status.tempPoints = tempPoints;
+			$scope.status.name = name;
+		}
+		$scope.tempGauge.series[0].data[0] = status.currentTemp;
 		if (status.timeRunning && status.timeRunning > 0) {
 			if (status.tempPoints && status.tempPoints.length > 1) {
 				$scope.tempGraph.series[0].data = [];
@@ -260,6 +246,7 @@ function StatusController($scope, $http, $rootScope, $atmosphere) {
 						status.currentTemp ]);
 			}
 		}
+
 		$rootScope.$broadcast('status', status);
 	}
 
@@ -273,7 +260,7 @@ function StatusController($scope, $http, $rootScope, $atmosphere) {
 				msg : data
 			});
 		}).success(function(data, status) {
-			$scope.updateStatus(status);
+			$scope.updateStatus(data);
 			$rootScope.$broadcast('notification', {
 				type : 'success',
 				msg : 'Maischvorgang gestoppt'
@@ -291,7 +278,7 @@ function StatusController($scope, $http, $rootScope, $atmosphere) {
 				msg : data
 			});
 		}).success(function(data, status) {
-			$scope.updateStatus(status);
+			$scope.updateStatus(data);
 			$rootScope.$broadcast('notification', {
 				type : 'success',
 				msg : 'Kochen gestartet'
@@ -309,7 +296,7 @@ function StatusController($scope, $http, $rootScope, $atmosphere) {
 				msg : data
 			});
 		}).success(function(data, status) {
-			$scope.updateStatus(status);
+			$scope.updateStatus(data);
 			$rootScope.$broadcast('notification', {
 				type : 'success',
 				msg : 'Kochen gestoppt'
@@ -336,6 +323,14 @@ function StatusController($scope, $http, $rootScope, $atmosphere) {
 				msg : 'Temperatur wird auf ' + $scope.targetTemp + ' gehalten'
 			});
 		});
+	}
+
+	$scope.showStartMashing = function() {
+		return $scope.status.operationMode == 'OFF';
+	}
+
+	$scope.showStopMasing = function() {
+		return $scope.status.operationMode == 'MASHING';
 	}
 
 }

@@ -18,6 +18,7 @@ import de.akuz.brewserver.hardware.BrewHardwareInterface.BrewHardwareListener;
 import de.akuz.brewserver.objects.BrewControllerConfiguration;
 import de.akuz.brewserver.objects.ProcessStep;
 import de.akuz.brewserver.objects.ProcessStep.StepType;
+import de.akuz.brewserver.objects.State.MODE;
 import de.akuz.brewserver.objects.internal.InternalProcessStep;
 
 public class BrewController implements IBrewController, BrewHardwareListener {
@@ -59,7 +60,7 @@ public class BrewController implements IBrewController, BrewHardwareListener {
 		checkNotRunning();
 		checkStartParameters();
 		hardware.heatingOff();
-		state.setRunning(true);
+		state.setRunning(MODE.MASHING);
 		state.setTimeStarted(System.currentTimeMillis());
 		processThread = new ProcessThread();
 		processThread.start();
@@ -82,7 +83,7 @@ public class BrewController implements IBrewController, BrewHardwareListener {
 	}
 
 	private void resetBrewController() {
-		state.setRunning(false);
+		state.setRunning(MODE.OFF);
 		if (processThread != null) {
 			processThread.interrupt();
 		}
@@ -107,8 +108,10 @@ public class BrewController implements IBrewController, BrewHardwareListener {
 
 	public void measuredTempChanged(float temp) {
 		state.setLastTemp(temp);
-		state.getTempLog().addTempPoint(
-				System.currentTimeMillis() - state.getTimeStarted(), temp);
+		if (state.getOperationMode() == MODE.MASHING) {
+			state.getTempLog().addTempPoint(
+					System.currentTimeMillis() - state.getTimeStarted(), temp);
+		}
 		notifyMeasuredTemp(temp);
 	}
 
@@ -128,7 +131,7 @@ public class BrewController implements IBrewController, BrewHardwareListener {
 	}
 
 	private void checkNotRunning() throws BrewControllerException {
-		if (state.isRunning()) {
+		if (state.getOperationMode() == MODE.MASHING) {
 			throw new BrewControllerStateException(
 					"The mash program can not be modified if mashing is running");
 		}
@@ -277,6 +280,7 @@ public class BrewController implements IBrewController, BrewHardwareListener {
 	}
 
 	public void setFixedTemperature(float temp) throws BrewControllerException {
+		state.setOperationMode(MODE.FIXED_TEMP);
 		hardware.setTargetTemperature(temp);
 	}
 
@@ -309,7 +313,7 @@ public class BrewController implements IBrewController, BrewHardwareListener {
 	}
 
 	public boolean isMashing() {
-		return state.isRunning();
+		return state.getOperationMode() == MODE.MASHING;
 	}
 
 	public void setHardware(BrewHardwareInterface hardware) {
@@ -319,13 +323,13 @@ public class BrewController implements IBrewController, BrewHardwareListener {
 
 	public void startCooking() throws BrewControllerException {
 		checkNotRunning();
-		state.setCooking(true);
+		state.setOperationMode(MODE.COOKING);
 		hardware.cook();
 	}
 
 	public void stopCooking() throws BrewControllerException {
 		checkNotRunning();
-		state.setCooking(false);
+		state.setOperationMode(MODE.OFF);
 		hardware.heatingOff();
 	}
 
