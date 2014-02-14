@@ -7,7 +7,7 @@ function NotificationController($scope, $atmosphere, $rootScope, $modal) {
 		$scope.showModalDialog(notification);
 	}, function(error) {
 		$rootScope.$broadcast('notification', {
-			msg : error,
+			msg : error.reasonPhrase,
 			type : 'error'
 		});
 	});

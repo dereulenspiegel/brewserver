@@ -28,6 +28,7 @@
 	</repositories>
 
 	<dependencies>
+		
 		<dependency>
 			<groupId>de.akuz.brewserver</groupId>
 			<artifactId>brewserver-objects</artifactId>

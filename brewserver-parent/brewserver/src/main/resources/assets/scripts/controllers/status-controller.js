@@ -13,7 +13,7 @@ function StatusController($scope, $http, $rootScope, $atmosphere) {
 			msg : data
 		});
 	}).success(function(data, status) {
-		if (data.currentStep.stepType == 'NOTIFICATION') {
+		if (data.currentStep && data.currentStep.stepType == 'NOTIFICATION') {
 			$rootScope.$broadcast('notification-modal', {
 				message : $scope.status.currentStep.message
 			});
@@ -28,7 +28,7 @@ function StatusController($scope, $http, $rootScope, $atmosphere) {
 		$scope.updateStatus(status);
 	}, function(error) {
 		$rootScope.$broadcast('notification', {
-			msg : error,
+			msg : error.reasonPhrase,
 			type : 'error'
 		});
 	});

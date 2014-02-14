@@ -16,6 +16,8 @@
 	<properties>
 		<dropwizard.version>0.6.2</dropwizard.version>
 		<jetty.version>8.1.10.v20130312</jetty.version>
+		<jetty.websocket.version>8.1.13.v20130916</jetty.websocket.version>
+		<atmosphere.version>2.0.1</atmosphere.version>
 	</properties>
 
 	<dependencies>
@@ -32,7 +34,7 @@
 		<dependency>
 			<groupId>org.eclipse.jetty</groupId>
 			<artifactId>jetty-websocket</artifactId>
-			<version>${jetty.version}</version>
+			<version>${jetty.websocket.version}</version>
 		</dependency>
 		<dependency>
 			<groupId>org.eclipse.jetty</groupId>
@@ -47,7 +49,7 @@
 		<dependency>
 			<groupId>org.atmosphere</groupId>
 			<artifactId>atmosphere-jersey</artifactId>
-			<version>1.0.12</version>
+			<version>${atmosphere.version}</version>
 		</dependency>
 		<dependency>
 			<groupId>org.apache.commons</groupId>
@@ -59,11 +61,6 @@
 			<artifactId>commons-lang</artifactId>
 			<version>2.3</version>
 		</dependency>
-		<!-- <dependency>
-			<groupId>org.rxtx</groupId>
-			<artifactId>rxtx</artifactId>
-			<version>2.1.7</version>
-		</dependency> -->
 
 		<dependency>
 			<groupId>junit</groupId>

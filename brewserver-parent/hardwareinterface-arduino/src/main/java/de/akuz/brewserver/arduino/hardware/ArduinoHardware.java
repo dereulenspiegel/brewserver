@@ -1,34 +1,18 @@
 package de.akuz.brewserver.arduino.hardware;
 
-import gnu.io.CommPort;
-import gnu.io.CommPortIdentifier;
-import gnu.io.NoSuchPortException;
-import gnu.io.PortInUseException;
-import gnu.io.SerialPort;
-import gnu.io.SerialPortEvent;
-import gnu.io.SerialPortEventListener;
-import gnu.io.UnsupportedCommOperationException;
-
 import java.io.BufferedReader;
-import java.io.BufferedWriter;
 import java.io.IOException;
-import java.io.InputStream;
-import java.io.InputStreamReader;
-import java.io.OutputStream;
-import java.io.OutputStreamWriter;
 import java.text.NumberFormat;
-import java.util.TooManyListenersException;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import de.akuz.brewserver.hardware.AbstractHardwareImpl;
+import de.akuz.brewserver.hardware.AbstractArduinoHardware;
 
-public class ArduinoHardware extends AbstractHardwareImpl implements
-		SerialPortEventListener {
+public class ArduinoHardware extends AbstractArduinoHardware {
 
 	private static enum ArduinoCommand {
-		HEATING_OFF("O"), COOK("C"), TEMPERATURE("T"), PID_PARAMS("P");
+		HEATING_OFF("O"), COOK("C"), TEMPERATURE("T");
 
 		private String command;
 
@@ -52,19 +36,13 @@ public class ArduinoHardware extends AbstractHardwareImpl implements
 
 	private final static String TERMINATION_CHAR = "\n";
 
-	private SerialPort serialPort;
 	private String portName;
-	private String pidParams;
-
-	private InputStream is;
-	private OutputStream os;
-	private BufferedReader br;
-	private BufferedWriter bw;
 
 	private float lastTemp;
 
 	public void setTargetTemperature(float temp) {
-		String tempString = tempNumberFormat.format(temp);
+		int intTemp = Math.round(temp);
+		String tempString = String.valueOf(intTemp);
 		writeCommand(ArduinoCommand.TEMPERATURE.getCommand() + tempString);
 
 	}
@@ -78,7 +56,7 @@ public class ArduinoHardware extends AbstractHardwareImpl implements
 	}
 
 	/*
-	 * OptionsString port=/dev/tty0|pid=100;100;100
+	 * OptionsString port=/dev/tty0;
 	 * 
 	 * @see
 	 * de.akuz.brewserver.hardware.BrewHardwareInterface#setOptions(java.lang
@@ -90,10 +68,9 @@ public class ArduinoHardware extends AbstractHardwareImpl implements
 			String[] keyValue = s.split("=");
 			if (keyValue.length == 2) {
 				if ("port".equals(keyValue[0])) {
-					portName = keyValue[1];
-				}
-				if ("pid".equals(keyValue[0])) {
-					pidParams = keyValue[1];
+					String value = keyValue[1];
+					value.replaceAll(";", "");
+					portName = value;
 				}
 			} else {
 				log.warn("Invalid configuration value: " + s);
@@ -103,109 +80,12 @@ public class ArduinoHardware extends AbstractHardwareImpl implements
 	}
 
 	public void init() {
-		try {
-			log.debug("Initializing serial connection");
-			CommPortIdentifier portIdentifier = CommPortIdentifier
-					.getPortIdentifier(portName);
-			CommPort commPort = portIdentifier.open(this.getClass()
-					.getSimpleName(), 2000);
-
-			if ((commPort instanceof SerialPort)) {
-				log.debug("Opening COM port " + portName);
-				this.serialPort = (SerialPort) commPort;
-				this.serialPort.setSerialPortParams(9600,
-						SerialPort.DATABITS_8, SerialPort.STOPBITS_1,
-						SerialPort.PARITY_NONE);
-
-				is = this.serialPort.getInputStream();
-				os = this.serialPort.getOutputStream();
-				br = new BufferedReader(new InputStreamReader(is));
-				bw = new BufferedWriter(new OutputStreamWriter(os));
-
-				serialPort.notifyOnDataAvailable(true);
-				serialPort.addEventListener(this);
-				try {
-					log.debug("Waiting for Arduino");
-					Thread.sleep(500);
-				} catch (InterruptedException e) {
-					log.warn(
-							"Exception while waiting till the device is ready",
-							e);
-				}
-				log.debug("Writing PID params " + pidParams);
-				writeCommand(ArduinoCommand.PID_PARAMS.getCommand() + pidParams);
-				heatingOff();
-			} else {
-				log.error("Specified port " + portName
-						+ " is not a serial port");
-			}
-		} catch (NoSuchPortException e) {
-			log.error("SerialPort does not exist", e);
-			notifyError(e);
-			throw new IllegalArgumentException(e);
-		} catch (PortInUseException e) {
-			log.error("SerialPort is in use", e);
-			notifyError(e);
-			throw new IllegalArgumentException(e);
-		} catch (UnsupportedCommOperationException e) {
-			log.error("Can't configure SerialPort", e);
-			notifyError(e);
-			throw new IllegalArgumentException(e);
-		} catch (IOException e) {
-			log.error("Can't open In- or Outputstream", e);
-			notifyError(e);
-			throw new IllegalArgumentException(e);
-		} catch (TooManyListenersException e) {
-			log.error("This SerialPort has already a listener", e);
-			notifyError(e);
-			throw new IllegalArgumentException(e);
-		}
-
+		openPort(portName);
 	}
 
 	public void cook() {
 		log.debug("Starting cooking");
 		writeCommand(ArduinoCommand.COOK.getCommand());
-
-	}
-
-	public void close() {
-		try {
-			log.debug("Closing serial connection");
-			heatingOff();
-			bw.flush();
-			bw.close();
-			br.close();
-			serialPort.close();
-		} catch (IOException e) {
-			log.error("Error while closing SerialPort", e);
-			notifyError(e);
-		}
-
-	}
-
-	public void serialEvent(SerialPortEvent event) {
-		if (event.getEventType() == SerialPortEvent.DATA_AVAILABLE) {
-			try {
-				log.debug("Received serial event DATA_AVAILABLE");
-				String data = br.readLine();
-
-				log.debug("Read line " + data);
-				if (data.startsWith("T")) {
-					float newTemp = parseLine(data);
-					if (newTemp != lastTemp) {
-						lastTemp = newTemp;
-						notifyMeasuredTempChanged(newTemp);
-					}
-				} else {
-					log.warn("Received unexpected line from controller: "
-							+ data);
-				}
-
-			} catch (Exception e) {
-				notifyError(e);
-			}
-		}
 
 	}
 
@@ -220,11 +100,22 @@ public class ArduinoHardware extends AbstractHardwareImpl implements
 	private void writeCommand(String command) {
 		try {
 			log.debug("Sending command to Arduino " + command);
-			bw.write(command + TERMINATION_CHAR);
-			bw.flush();
+			write(command + TERMINATION_CHAR);
 		} catch (IOException e) {
 			notifyError(e);
 		}
+	}
+
+	@Override
+	protected void dataAvailable(BufferedReader reader) {
+		try {
+			String data = reader.readLine();
+			parseLine(data);
+		} catch (IOException e) {
+			log.error("Error while reading line", e);
+			notifyError(e);
+		}
+
 	}
 
 }

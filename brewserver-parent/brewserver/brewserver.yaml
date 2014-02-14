@@ -1,6 +1,6 @@
 hardwareConfig:
   hardwareImpl: de.akuz.brewserver.arduino.hardware.ArduinoHardware
-  hardwareOptions: port=COM8|pid=100;100;100
+  hardwareOptions: port=COM8
  
 pathToState: ./state/
 

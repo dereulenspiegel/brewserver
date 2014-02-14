@@ -117,11 +117,12 @@ public class BrewServerService extends Service<BrewServerConfiguration> {
 		atmosphereServlet.framework().addInitParameter(
 				"org.atmosphere.websocket.messageContentType",
 				"application/json");
+		atmosphereServlet.framework().addInitParameter(
+				"org.atmosphere.useWebSocket", "true");
 		atmosphereServlet.framework().shareExecutorServices(true);
 		// atmosphereServlet.framework().addInitParameter(
 		// "org.atmosphere.cpr.broadcastFilterClasses",
 		// "com.example.helloworld.filters.BadWordFilter");
-		// TODO mount correctly via config
 		environment.addServlet(atmosphereServlet, atmosphereUrl + "*");
 	}
 
