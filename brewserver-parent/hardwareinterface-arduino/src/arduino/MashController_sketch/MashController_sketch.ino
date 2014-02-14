@@ -38,6 +38,7 @@ void loop()
 {
   readSerial();
   if(tempSensorCount==0){
+    Serial.println("WARNING: No Temp sensors found");
     heaterOff();
     return;
   }
@@ -52,8 +53,12 @@ void loop()
   }
   
   if(heatingOn==false && currentTemp>desiredTemp){
-    delta = currentTemp-desiredTemp; 
+    float currentDelta = currentTemp-desiredTemp;
+    if(currentDelta > delta){
+       delta=currentDelta; 
+    }
   }
+  delay(1000);
 }
 
 void heaterOn(){
@@ -86,7 +91,6 @@ void updateTemp(){
 
 /**
 Send T for Target temp eg T65
-Set PID values via Pkp;ki;kd;
 */
 void readSerial(){
   char inData[64];
